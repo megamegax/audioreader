@@ -114,9 +114,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                         </section>
 
                         <section data-route="users">
-                            <paper-material elevation="1">
+                            <paper-material elevation="1" style="height:300px;">
+                                <google-signin-aware scopes="https://www.googleapis.com/auth/drive" on-google-signin-aware-success="_signedIn" on-google-signin-aware-signed-out="_signedOut">
+                                </google-signin-aware>
+                                
+                                <google-drive clientId="1054047045356-j8pgqgls9vdef3rl09hapoicumbte0bo.apps.googleusercontent.com"></google-drive>
                                 <h2 class="page-title">Users</h2>
-                                <p>This is the users section</p>
+                                <p>{{message}}</p>
                                 <a href$="{{baseUrl}}users/Addy">Addy</a>
                                 <br>
                                 <a href$="{{baseUrl}}users/Rob">Rob</a>

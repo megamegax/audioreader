@@ -27,6 +27,8 @@ require('polymer/paper-button/paper-button.html!');
 require('polymer/paper-styles/typography.html!');
 require('polymer/paper-toast/paper-toast.html!');
 require('polymer/paper-item/paper-item.html!');
+require('polymer/google-drive/google-drive.html!');
+require('polymer/google-signin/google-signin-aware.html!');
 //STYLES
 require('styles/app-theme.html!');
 require('styles/shared-styles.html!');

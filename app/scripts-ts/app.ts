@@ -31,7 +31,8 @@ import 'polymer/paper-button/paper-button.html!';
 import 'polymer/paper-styles/typography.html!';
 import 'polymer/paper-toast/paper-toast.html!';
 import 'polymer/paper-item/paper-item.html!';
-
+import 'polymer/google-drive/google-drive.html!';
+import 'polymer/google-signin/google-signin-aware.html!';
 //STYLES
 import 'styles/app-theme.html!';
 import 'styles/shared-styles.html!';

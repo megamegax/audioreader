@@ -21,37 +21,39 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             }
         </style>
         <div class="layout vertical">
-            <audio>
-                <source></source>
+            <audio id="audio">
+                <source id="source" src="http://mp3.click4skill.hu/mp3/english/m8532en_US.mp3" preload="auto" type="audio/mp3"/>
+                <p>Your browser does not support the audio element.</p>
             </audio>
             <iron-image style="width:100%; height:400px; background-color: white;" sizing="contain" preload src="http://i1142.photobucket.com/albums/n601/G_Scar/Throne%20of%20Glass%20Downloads/TheAssassinsBladeUSWallpaper1366x768_zps0db60356.jpg"
             style="width:100%; height:400px"></iron-image>
-
-            <paper-progress value="100" style="width:100%;"></paper-progress>
+            CurrentTime: <span>[[currentTime]]</span> / <span>[[maxTime]]</span>
+            <paper-slider min="0" max="100" value="[[progress]]"></paper-slider>
             <div class="layout horizontal" style="margin:auto; min-width:395px">
                 <center style="display:block;">
-                    <paper-button class="flex">
+                    <paper-button on-click="backwardTenSecTapped" class="flex">
                         10mp
                         <iron-icon icon="av:fast-rewind"></iron-icon>
                     </paper-button>
-                    <paper-button class="flex">
+                    <paper-button on-click="backwardOneSecTapped" class="flex">
                         1mp
                         <iron-icon icon="av:fast-rewind"></iron-icon>
                     </paper-button>
 
-                    <paper-icon-button icon="av:play-circle-filled"></paper-icon-button>
+                    <paper-icon-button on-click="onPlayTapped" icon="av:play-circle-filled"></paper-icon-button>
 
-                    <paper-button class="flex">
+                    <paper-button on-click="forwardOneSecTapped" class="flex">
                         1mp
                         <iron-icon icon="av:fast-forward"></iron-icon>
                     </paper-button>
-                    <paper-button class="flex">
+                    <paper-button on-click="forwardTenSecTapped" class="flex">
                         10mp
                         <iron-icon icon="av:fast-forward"></iron-icon>
                     </paper-button>
                 </center>
             </div>
         </div>
+        <script src="./jsmediatag.min.js" />
     </template>
-    
+
 </dom-module>
