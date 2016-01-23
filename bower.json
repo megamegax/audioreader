@@ -7,7 +7,11 @@
     "page": "visionmedia/page.js#~1.6.4",
     "paper-elements": "PolymerElements/paper-elements#^1.0.1",
     "platinum-elements": "PolymerElements/platinum-elements#^1.1.0",
-    "polymer": "Polymer/polymer#^1.2.0"
+    "polymer": "~1.2.3",
+    "polymer-ts": "~0.1.22",
+    "system.js": "~0.19.17",
+    "charto-polymer-shim": "https://github.com/charto/charto-polymer-shim.git#~0.0.1",
+    "systemjs-plugin-html": "https://github.com/Hypercubed/systemjs-plugin-html.git#~0.0.7"
   },
   "devDependencies": {
     "web-component-tester": "^4.0.0"

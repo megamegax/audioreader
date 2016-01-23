@@ -1,0 +1,78 @@
+<dom-module id="app-frontend">
+    <template>
+        <paper-drawer-panel id="paperDrawerPanel">
+            <!-- Drawer Scroll Header Panel -->
+            <paper-header-panel drawer fixed>
+
+                <!-- Drawer Toolbar -->
+                <paper-toolbar id="drawerToolbar">
+                    <span class="menu-name">Könyvek</span>
+                </paper-toolbar>
+
+                <!-- Drawer Content -->
+                <paper-menu attr-for-selected="data-route" selected="[[route]]">
+                    <a data-route="home" href="{{baseUrl}}">
+
+                        <span>The Assassin's Blade</span>
+                    </a>
+
+                    <a data-route="users" href="{{baseUrl}}users">
+
+                        <span>Harry Potter and the Sorcerer's stone</span>
+                    </a>
+                </paper-menu>
+            </paper-header-panel>
+
+            <!-- Main Area -->
+            <paper-header-panel main id="headerPanelMain" mode="cover">
+                <!-- Main Toolbar -->
+                <paper-toolbar id="mainToolbar" class="tall">
+                    <paper-icon-button id="paperToggle" icon="menu" paper-drawer-toggle></paper-icon-button>
+                </paper-toolbar>
+
+                <!-- Main Content -->
+                <div class="content" style="height:500px">
+                    <iron-pages attr-for-selected="data-route" selected="{{route}}">
+                        <section data-route="home" class="fit">
+                            <paper-material elevation="1" style="min-width:400px">
+                                <media-player id="player" url=""></media-player>
+                            </paper-material>
+                        </section>
+
+                        <section data-route="users">
+                            <paper-material elevation="1">
+                                <h2 class="page-title">Users</h2>
+                                <p>This is the users section</p>
+                                <a href$="{{baseUrl}}users/Addy">Addy</a>
+                                <br>
+                                <a href$="{{baseUrl}}users/Rob">Rob</a>
+                                <br>
+                                <a href$="{{baseUrl}}users/Chuck">Chuck</a>
+                                <br>
+                                <a href$="{{baseUrl}}users/Sam">Sam</a>
+                            </paper-material>
+                        </section>
+
+                        <section data-route="user-info">
+                            <paper-material elevation="1">
+                                <h2 class="page-title">User: {{params.name}}</h2>
+                                <div>This is {{params.name}}'s section</div>
+                            </paper-material>
+                        </section>
+
+                        <section data-route="contact">
+                            <paper-material elevation="1">
+                                <h2 class="page-title">Contact</h2>
+                                <p>This is the contact section</p>
+                            </paper-material>
+                        </section>
+                    </iron-pages>
+                </div>
+            </paper-header-panel>
+        </paper-drawer-panel>
+
+        <paper-toast id="toast">
+            <span class="toast-hide-button" role="button" tabindex="0" onclick="app.$.toast.hide()">Ok</span>
+        </paper-toast>
+    </template>
+</dom-module>

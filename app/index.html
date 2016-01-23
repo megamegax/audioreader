@@ -45,18 +45,29 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     <!-- build:css styles/main.css -->
     <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" type="text/css" href="bower_components/charto-polymer-shim/hide.css" />
     <!-- endbuild-->
 
     <!-- build:js bower_components/webcomponentsjs/webcomponents-lite.min.js -->
-    <script src="bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+    <script type="text/javascript" src="bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+    <script type="text/javascript" src="bower_components/page/page.js"></script>
+    <script type="text/javascript" src="bower_components/system.js/dist/system.js"></script>
+    <script type="text/javascript" src="bower_components/charto-polymer-shim/loader.js"></script>
+    <script type="text/javascript" src="config.js"></script>
     <!-- endbuild -->
-
-    <!-- Because this project uses vulcanize this should be your only html import
-       in this file. All other imports should go in elements.html -->
-    <link rel="import" href="elements/elements.html">
 
     <!-- For shared styles, shared-styles.html import in elements.html -->
     <style is="custom-style" include="shared-styles"></style>
+
+    <script>
+        loadMainComponents([
+			[
+				'bower_components/polymer/polymer.html!',
+				'bower_components/polymer-ts/polymer-ts.html!'
+			],
+			'./scripts-ts/app'
+		]);
+    </script>
 </head>
 
 <body unresolved>
@@ -159,7 +170,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </template>
 
     <!-- build:js scripts/app.js -->
-    <script src="scripts/app.js"></script>
+    <script src="bower_components/polymer-ts/polymer-ts.min.js"></script>
     <!-- endbuild-->
 </body>
 
