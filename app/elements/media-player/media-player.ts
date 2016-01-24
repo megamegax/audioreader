@@ -72,14 +72,14 @@ class MediaPlayer extends polymer.Base {
     onTouchEnded() {
         this.touchState = TouchState.UP;
     }
-    forwardOneSecTapped(event) {
-        this.audio.seek(this.currentTime + 1);
+    forwardOneMinTapped(event) {
+        this.audio.seek(this.currentTime + 60);
     }
     forwardTenSecTapped(event) {
         this.audio.seek(this.currentTime + 10);
     }
-    backwardOneSecTapped(event) {
-        this.audio.seek(this.currentTime - 1);
+    backwardOneMinTapped(event) {
+        this.audio.seek(this.currentTime - 60);
     }
     backwardTenSecTapped(event) {
         this.audio.seek(this.currentTime - 10);

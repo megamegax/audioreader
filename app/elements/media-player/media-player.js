@@ -69,14 +69,14 @@ var MediaPlayer = (function (_super) {
     MediaPlayer.prototype.onTouchEnded = function () {
         this.touchState = TouchState.UP;
     };
-    MediaPlayer.prototype.forwardOneSecTapped = function (event) {
-        this.audio.seek(this.currentTime + 1);
+    MediaPlayer.prototype.forwardOneMinTapped = function (event) {
+        this.audio.seek(this.currentTime + 60);
     };
     MediaPlayer.prototype.forwardTenSecTapped = function (event) {
         this.audio.seek(this.currentTime + 10);
     };
-    MediaPlayer.prototype.backwardOneSecTapped = function (event) {
-        this.audio.seek(this.currentTime - 1);
+    MediaPlayer.prototype.backwardOneMinTapped = function (event) {
+        this.audio.seek(this.currentTime - 60);
     };
     MediaPlayer.prototype.backwardTenSecTapped = function (event) {
         this.audio.seek(this.currentTime - 10);

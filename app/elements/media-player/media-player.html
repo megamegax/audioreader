@@ -28,23 +28,23 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             on-mousedown="onTouchStarted" on-touchend="onTouchEnded" on-mouseup="onTouchEnded" on-touchcancel="onTouchEnded" on-mousecancel="onTouchEnded" on-click="onTouchEnded"></paper-slider>
             <div class="layout horizontal" style="margin:auto; min-width:395px">
                 <center style="display:block;">
-                    <paper-button on-click="backwardTenSecTapped" class="flex">
-                        10mp
+                    <paper-button on-click="backwardOneMinTapped" class="flex">
+                        1p
                         <iron-icon icon="av:fast-rewind"></iron-icon>
                     </paper-button>
-                    <paper-button on-click="backwardOneSecTapped" class="flex">
-                        1mp
+                    <paper-button on-click="backwardTenSecTapped" class="flex">
+                        10mp
                         <iron-icon icon="av:fast-rewind"></iron-icon>
                     </paper-button>
 
                     <paper-icon-button on-click="onPlayTapped" icon="av:play-circle-filled"></paper-icon-button>
 
-                    <paper-button on-click="forwardOneSecTapped" class="flex">
-                        1mp
-                        <iron-icon icon="av:fast-forward"></iron-icon>
-                    </paper-button>
                     <paper-button on-click="forwardTenSecTapped" class="flex">
                         10mp
+                        <iron-icon icon="av:fast-forward"></iron-icon>
+                    </paper-button>
+                    <paper-button on-click="forwardOneMinTapped" class="flex">
+                        1p
                         <iron-icon icon="av:fast-forward"></iron-icon>
                     </paper-button>
                 </center>
