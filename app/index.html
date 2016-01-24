@@ -54,6 +54,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <script type="text/javascript" src="bower_components/system.js/dist/system.js"></script>
     <script type="text/javascript" src="bower_components/charto-polymer-shim/loader.js"></script>
     <script type="text/javascript" src="config.js"></script>
+    <script src="elements/media-player/jsmediatag.min.js"></script>
     <!-- endbuild -->
 
     <!-- For shared styles, shared-styles.html import in elements.html -->
@@ -117,7 +118,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                             <paper-material elevation="1" style="height:300px;">
                                 <google-signin-aware scopes="https://www.googleapis.com/auth/drive" on-google-signin-aware-success="_signedIn" on-google-signin-aware-signed-out="_signedOut">
                                 </google-signin-aware>
-                                
+
                                 <google-drive clientId="1054047045356-j8pgqgls9vdef3rl09hapoicumbte0bo.apps.googleusercontent.com"></google-drive>
                                 <h2 class="page-title">Users</h2>
                                 <p>{{message}}</p>

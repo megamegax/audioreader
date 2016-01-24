@@ -34,19 +34,43 @@ var MediaPlayer = (function (_super) {
             format: 'mp3',
             buffer: true,
         });
+        // this.createCORSRequest('GET',this.url);
         this.maxTime = this.audio.duration();
         var self = this;
         this.audio.on('load', function () {
             self.maxTime = self.audio.duration();
+            console.log(self.maxTime, self.currentTime, self.progress);
         });
         setInterval(function () {
             if (self.touchState === TouchState.UP) {
                 self.currentTime = self.audio.seek();
             }
         }, 10);
+        window.jsmediatags.read(this.url, { onSuccess: function (tag) {
+                console.log(tag);
+            }, onError: function (error) {
+                console.log(error);
+            }
+        });
     }
     MediaPlayer.prototype.computeProgress = function (currentTime, maxTime) {
-        return (currentTime / maxTime) * 100;
+        var progress;
+        progress = (currentTime / maxTime) * 100;
+        return progress;
+    };
+    MediaPlayer.prototype.createCORSRequest = function (method, url) {
+        var xhr = new XMLHttpRequest();
+        if ('withCredentials' in xhr) {
+            xhr.open(method, url, true);
+        }
+        else if (typeof XDomainRequest != 'undefined') {
+            xhr = new XDomainRequest();
+            xhr.open(method, url);
+        }
+        else {
+            xhr = null;
+        }
+        return xhr;
     };
     MediaPlayer.prototype.onPlayTapped = function (event) {
         if (this.playState === PlayState.PAUSED) {

@@ -6,14 +6,14 @@ import 'polymer/iron-icon/iron-icon.html!';
 import './media-player.html!';
 import 'polymer/paper-slider/paper-slider.html!';
 import {Howl} from  'polymer/howler.js/howler.min.js';
+
 import './states/PlayState';
 import './states/TouchState';
 @component('media-player')
 class MediaPlayer extends polymer.Base {
     audio: Howl;
     playState: PlayState;
-    touchState: TouchState;
-    jsmediatag: any;
+    touchState: TouchState;    
     maxTime: number;
     currentTime: number;
     url = "http://hunyady.homeip.net/~hunyadym/SarahJMaasTheAssassinsBlade.mp3";
@@ -22,7 +22,9 @@ class MediaPlayer extends polymer.Base {
     progress: number;
 
     computeProgress(currentTime, maxTime) {
-        return (currentTime / maxTime) * 100
+        var progress:number;
+        progress = (currentTime / maxTime) * 100;
+        return progress;
     }
 
     // @observe('progress')
@@ -32,6 +34,7 @@ class MediaPlayer extends polymer.Base {
 
     constructor() {
         super();
+       
         this.playState = PlayState.PAUSED;
         this.touchState = TouchState.UP;
         this.audio = new Howl({
@@ -39,18 +42,44 @@ class MediaPlayer extends polymer.Base {
             format: 'mp3',
             buffer: true,
         });
-
+        
+     // this.createCORSRequest('GET',this.url);
         this.maxTime = this.audio.duration();
         var self = this;
         this.audio.on('load', function() {
             self.maxTime = self.audio.duration();
+            
+            console.log(self.maxTime, self.currentTime,self.progress);
         });
         setInterval(function() {
             if (self.touchState === TouchState.UP) {
                 self.currentTime = self.audio.seek();
             }
         }, 10);
+        
+          window.jsmediatags.read(this.url,{onSuccess:function(tag){
+            console.log(tag);
+        },onError:function(error){
+            console.log(error);
+            }
+        });
+        
+        
     }
+    
+    createCORSRequest(method,url){
+        var xhr = new XMLHttpRequest();
+        if('withCredentials' in xhr){
+            xhr.open(method,url,true);
+        }else if(typeof XDomainRequest != 'undefined'){
+            xhr = new XDomainRequest();
+            xhr.open(method,url);
+        }else{
+            xhr = null;
+        }
+        return xhr;
+    }
+    
     onPlayTapped(event) {
         if (this.playState === PlayState.PAUSED) {
             this.audio.play();
