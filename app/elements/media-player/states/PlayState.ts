@@ -1,0 +1,3 @@
+enum PlayState {
+    PLAYING, PAUSED
+}

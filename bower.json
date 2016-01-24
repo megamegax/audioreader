@@ -13,7 +13,8 @@
     "charto-polymer-shim": "https://github.com/charto/charto-polymer-shim.git#~0.0.1",
     "systemjs-plugin-html": "https://github.com/Hypercubed/systemjs-plugin-html.git#~0.0.7",
     "google-drive": "~1.0.1",
-    "fu-area": "~1.1.2"
+    "fu-area": "~1.1.2",
+    "howler.js": "howler#~2.0.0-beta7"
   },
   "devDependencies": {
     "web-component-tester": "^4.0.0"

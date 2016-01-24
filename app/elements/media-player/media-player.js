@@ -15,50 +15,75 @@ require('polymer/paper-button/paper-button.html!');
 require('polymer/iron-icon/iron-icon.html!');
 require('./media-player.html!');
 require('polymer/paper-slider/paper-slider.html!');
+var howler_min_js_1 = require('polymer/howler.js/howler.min.js');
+require('./states/PlayState');
+require('./states/TouchState');
 var MediaPlayer = (function (_super) {
     __extends(MediaPlayer, _super);
+    // @observe('progress')
+    // progressChanged(newProgress, oldProgress) {
+    //     this.audio.seek(newProgress / 100 * this.maxTime);
+    // }
     function MediaPlayer() {
         _super.call(this);
-        // url = "http://hunyady.homeip.net/~hunyadym/SarahJMaasTheAssassinsBlade.mp3";
-        this.url = "http://mp3.click4skill.hu/mp3/english/m8532en_US.mp3";
-        this.maxTime = 30;
-        this.audio = this.$.audio;
-        this.source = this.$.source;
+        this.url = "http://hunyady.homeip.net/~hunyadym/SarahJMaasTheAssassinsBlade.mp3";
+        this.playState = PlayState.PAUSED;
+        this.touchState = TouchState.UP;
+        this.audio = new howler_min_js_1.Howl({
+            src: [this.url],
+            format: 'mp3',
+            buffer: true,
+        });
+        this.maxTime = this.audio.duration();
         var self = this;
-        this.source.src = this.url;
+        this.audio.on('load', function () {
+            self.maxTime = self.audio.duration();
+        });
         setInterval(function () {
-            console.log('tszt');
-            self.currentTime = self.audio.currentTime;
-        }, 1000);
+            if (self.touchState === TouchState.UP) {
+                self.currentTime = self.audio.seek();
+            }
+        }, 10);
     }
     MediaPlayer.prototype.computeProgress = function (currentTime, maxTime) {
         return (currentTime / maxTime) * 100;
     };
-    MediaPlayer.prototype.progressChanged = function (newProgress, oldProgress) {
-        this.currentTime = newProgress / 100 * maxTime;
-    };
     MediaPlayer.prototype.onPlayTapped = function (event) {
-        this.audio.play();
-        console.log(this.source.src);
+        if (this.playState === PlayState.PAUSED) {
+            this.audio.play();
+            this.playState = PlayState.PLAYING;
+        }
+        else if (this.playState === PlayState.PLAYING) {
+            this.playState = PlayState.PAUSED;
+            this.audio.pause();
+        }
+    };
+    MediaPlayer.prototype.onSliderChanged = function (event, detail) {
+        console.log('sliderchanged', this.progress, this.$.slider.value);
+        this.audio.seek(this.$.slider.value / 100 * this.maxTime);
+        this.touchState = TouchState.UP;
+    };
+    MediaPlayer.prototype.onTouchStarted = function () {
+        this.touchState = TouchState.DOWN;
+    };
+    MediaPlayer.prototype.onTouchEnded = function () {
+        this.touchState = TouchState.UP;
     };
     MediaPlayer.prototype.forwardOneSecTapped = function (event) {
-        this.audio.currentTime += 1;
+        this.audio.seek(this.currentTime + 1);
     };
     MediaPlayer.prototype.forwardTenSecTapped = function (event) {
-        this.audio.currentTime += 10;
+        this.audio.seek(this.currentTime + 10);
     };
     MediaPlayer.prototype.backwardOneSecTapped = function (event) {
-        this.audio.currentTime -= 1;
+        this.audio.seek(this.currentTime - 1);
     };
     MediaPlayer.prototype.backwardTenSecTapped = function (event) {
-        this.audio.currentTime -= 10;
+        this.audio.seek(this.currentTime - 10);
     };
     __decorate([
         property({ computed: 'computeProgress(currentTime,maxTime)' })
     ], MediaPlayer.prototype, "progress", void 0);
-    __decorate([
-        observe('progress')
-    ], MediaPlayer.prototype, "progressChanged", null);
     MediaPlayer = __decorate([
         component('media-player')
     ], MediaPlayer);
