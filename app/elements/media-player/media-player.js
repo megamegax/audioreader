@@ -20,13 +20,11 @@ require('./states/PlayState');
 require('./states/TouchState');
 var MediaPlayer = (function (_super) {
     __extends(MediaPlayer, _super);
-    // @observe('progress')
-    // progressChanged(newProgress, oldProgress) {
-    //     this.audio.seek(newProgress / 100 * this.maxTime);
-    // }
     function MediaPlayer() {
         _super.call(this);
-        this.url = "http://hunyady.homeip.net/~hunyadym/SarahJMaasTheAssassinsBlade.mp3";
+        //url = "http://hunyady.homeip.net/~hunyadym/SarahJMaasTheAssassinsBlade.mp3";
+        //  url = "http://mp3.click4skill.hu/mp3/english/m8532en_US.mp3";
+        this.url = "https://drive.google.com/open?id=0B87RQKVjvrFVSjlGN2lROHgwdXc";
         this.playState = PlayState.PAUSED;
         this.touchState = TouchState.UP;
         this.audio = new howler_min_js_1.Howl({
@@ -35,45 +33,41 @@ var MediaPlayer = (function (_super) {
             buffer: true,
         });
         // this.createCORSRequest('GET',this.url);
-        this.maxTime = this.audio.duration();
+        this.maxTime = 0;
         var self = this;
+        // this.audio.
         this.audio.on('load', function () {
+            console.log('audio is loaded');
             self.maxTime = self.audio.duration();
             console.log(self.maxTime, self.currentTime, self.progress);
         });
         setInterval(function () {
             if (self.touchState === TouchState.UP) {
-                self.currentTime = self.audio.seek();
+                if (isNaN(self.audio.seek())) {
+                    self.currentTime = 0;
+                }
+                else {
+                    self.currentTime = self.audio.seek();
+                }
             }
         }, 10);
-        window.jsmediatags.read(this.url, { onSuccess: function (tag) {
-                console.log(tag);
-            }, onError: function (error) {
-                console.log(error);
-            }
-        });
     }
     MediaPlayer.prototype.computeProgress = function (currentTime, maxTime) {
         var progress;
         progress = (currentTime / maxTime) * 100;
         return progress;
     };
-    MediaPlayer.prototype.createCORSRequest = function (method, url) {
-        var xhr = new XMLHttpRequest();
-        if ('withCredentials' in xhr) {
-            xhr.open(method, url, true);
-        }
-        else if (typeof XDomainRequest != 'undefined') {
-            xhr = new XDomainRequest();
-            xhr.open(method, url);
-        }
-        else {
-            xhr = null;
-        }
-        return xhr;
+    MediaPlayer.prototype.loadAudio = function () {
+        var self = this;
+        var freader = new FileReader();
+        freader.readAsDataURL(audiofiles[0]);
+        freader.onload = function (e) {
+            self.audio.urls.push(e.target.result);
+        };
     };
     MediaPlayer.prototype.onPlayTapped = function (event) {
         if (this.playState === PlayState.PAUSED) {
+            this.loadAudio();
             this.audio.play();
             this.playState = PlayState.PLAYING;
         }

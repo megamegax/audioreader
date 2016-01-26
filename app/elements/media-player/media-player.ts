@@ -6,82 +6,73 @@ import 'polymer/iron-icon/iron-icon.html!';
 import './media-player.html!';
 import 'polymer/paper-slider/paper-slider.html!';
 import {Howl} from  'polymer/howler.js/howler.min.js';
-
 import './states/PlayState';
 import './states/TouchState';
+
 @component('media-player')
 class MediaPlayer extends polymer.Base {
     audio: Howl;
     playState: PlayState;
-    touchState: TouchState;    
+    touchState: TouchState;
     maxTime: number;
     currentTime: number;
-    url = "http://hunyady.homeip.net/~hunyadym/SarahJMaasTheAssassinsBlade.mp3";
+    //url = "http://hunyady.homeip.net/~hunyadym/SarahJMaasTheAssassinsBlade.mp3";
     //  url = "http://mp3.click4skill.hu/mp3/english/m8532en_US.mp3";
+    url = "https://drive.google.com/open?id=0B87RQKVjvrFVSjlGN2lROHgwdXc";
+
     @property({ computed: 'computeProgress(currentTime,maxTime)' })
     progress: number;
-
     computeProgress(currentTime, maxTime) {
-        var progress:number;
+        var progress: number;
         progress = (currentTime / maxTime) * 100;
         return progress;
     }
 
-    // @observe('progress')
-    // progressChanged(newProgress, oldProgress) {
-    //     this.audio.seek(newProgress / 100 * this.maxTime);
-    // }
-
     constructor() {
         super();
-       
+
         this.playState = PlayState.PAUSED;
         this.touchState = TouchState.UP;
+
         this.audio = new Howl({
             src: [this.url],
             format: 'mp3',
             buffer: true,
         });
         
-     // this.createCORSRequest('GET',this.url);
-        this.maxTime = this.audio.duration();
+        // this.createCORSRequest('GET',this.url);
+        this.maxTime = 0;
         var self = this;
+        // this.audio.
         this.audio.on('load', function() {
+            console.log('audio is loaded');
             self.maxTime = self.audio.duration();
-            
-            console.log(self.maxTime, self.currentTime,self.progress);
+            console.log(self.maxTime, self.currentTime, self.progress);
         });
         setInterval(function() {
             if (self.touchState === TouchState.UP) {
-                self.currentTime = self.audio.seek();
+                if (isNaN(self.audio.seek())) {
+                    self.currentTime = 0;
+                } else {
+                    self.currentTime = self.audio.seek();
+                    // self.currentTime = 1;
+                }
+
             }
         }, 10);
-        
-          window.jsmediatags.read(this.url,{onSuccess:function(tag){
-            console.log(tag);
-        },onError:function(error){
-            console.log(error);
-            }
-        });
-        
-        
     }
-    
-    createCORSRequest(method,url){
-        var xhr = new XMLHttpRequest();
-        if('withCredentials' in xhr){
-            xhr.open(method,url,true);
-        }else if(typeof XDomainRequest != 'undefined'){
-            xhr = new XDomainRequest();
-            xhr.open(method,url);
-        }else{
-            xhr = null;
+    loadAudio() {
+        var self = this;
+        var freader = new FileReader();
+        freader.readAsDataURL(audiofiles[0]);
+
+        freader.onload = function(e) {
+            self.audio.urls.push(e.target.result);
         }
-        return xhr;
     }
-    
     onPlayTapped(event) {
         if (this.playState === PlayState.PAUSED) {
+            this.loadAudio();
             this.audio.play();
             this.playState = PlayState.PLAYING;
         } else if (this.playState === PlayState.PLAYING) {
@@ -113,6 +104,30 @@ class MediaPlayer extends polymer.Base {
     backwardTenSecTapped(event) {
         this.audio.seek(this.currentTime - 10);
     }
+
+    /*
+        createCORSRequest(method, url) {
+            var xhr = new XMLHttpRequest();
+            if ('withCredentials' in xhr) {
+                xhr.open(method, url, true);
+            } else if (typeof XDomainRequest != 'undefined') {
+                xhr = new XDomainRequest();
+                xhr.open(method, url);
+            } else {
+                xhr = null;
+            }
+            return xhr;
+        }
+    
+        getID3Tag() {
+            var window = new Window;        
+            /*window.jsmediatags.read(this.url,{onSuccess:function(tag){
+                      console.log(tag);
+                  },onError:function(error){
+                      console.log(error);
+                      }
+                  });*/
+    //  }
 
 }
 
