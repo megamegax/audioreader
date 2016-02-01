@@ -7,26 +7,28 @@ The complete set of contributors may be found at http://polymer.github.io/CONTRI
 Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 -->
-
 <dom-module id="media-player">
     <template>
         <style>
-            :host {
-                display: block;
-                min-width: 395px;
-            }
-            
-            span {
-                @apply(--paper-font-body1);
-            }
+        :host {
+            display: block;
+            min-width: 395px;
+        }
+        
+        span {
+            @apply(--paper-font-body1);
+        }
         </style>
         <div class="layout vertical">
-            <input type=file ></input>            
-            <iron-image style="width:100%; height:400px; background-color: white;" sizing="contain" preload src="http://i1142.photobucket.com/albums/n601/G_Scar/Throne%20of%20Glass%20Downloads/TheAssassinsBladeUSWallpaper1366x768_zps0db60356.jpg"
-            style="width:100%; height:400px"></iron-image>
-            CurrentTime: <span>[[currentTime]]</span> / <span>[[maxTime]]</span>
-            <paper-slider id="slider" min="0" max="100" value="{{progress}}" style="width:100%" on-change="onSliderChanged" on-touchstart="onTouchStarted"
-            on-mousedown="onTouchStarted" on-touchend="onTouchEnded" on-mouseup="onTouchEnded" on-touchcancel="onTouchEnded" on-mousecancel="onTouchEnded" on-click="onTouchEnded"></paper-slider>
+            <input id="file" type="file" onpropertychange="add()" style="position:absolute;visibility:hidden;" />
+            <input type="button" id="filebtn" value="Hangoskönyv feltöltés" accept="image/gif, image/jpeg, image/png" on-click="handleBtn">
+            <iron-image style="width:100%; height:400px; background-color: white;" sizing="contain" preload src="http://i1142.photobucket.com/albums/n601/G_Scar/Throne%20of%20Glass%20Downloads/TheAssassinsBladeUSWallpaper1366x768_zps0db60356.jpg" style="width:100%; height:400px"></iron-image>
+            <div class="layout horizontal" style="width:395px">
+                <span>[[formatedCurrentTime]]</span> / <span>[[formatedMaxTime]]</span>
+                <span class="flex"></span>
+                <span>[[progress]]%</span>
+            </div>
+            <paper-slider id="slider" min="0" max="100" value="{{progress}}" style="width:100%" on-change="onSliderChanged" on-touchstart="onTouchStarted" on-mousedown="onTouchStarted" on-touchend="onTouchEnded" on-mouseup="onTouchEnded" on-touchcancel="onTouchEnded" on-mousecancel="onTouchEnded" on-click="onTouchEnded"></paper-slider>
             <div class="layout horizontal" style="margin:auto; min-width:395px">
                 <center style="display:block;">
                     <paper-button on-click="backwardOneMinTapped" class="flex">
@@ -37,9 +39,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                         10mp
                         <iron-icon icon="av:fast-rewind"></iron-icon>
                     </paper-button>
-
                     <paper-icon-button on-click="onPlayTapped" icon="av:play-circle-filled"></paper-icon-button>
-
                     <paper-button on-click="forwardTenSecTapped" class="flex">
                         10mp
                         <iron-icon icon="av:fast-forward"></iron-icon>
@@ -51,7 +51,5 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 </center>
             </div>
         </div>
-      
     </template>
-
 </dom-module>

@@ -11,14 +11,17 @@ import './states/TouchState';
 
 @component('media-player')
 class MediaPlayer extends polymer.Base {
+
+    interval:Interval;
     audio: Howl;
     playState: PlayState;
     touchState: TouchState;
     maxTime: number;
-    currentTime: number;
-    //url = "http://hunyady.homeip.net/~hunyadym/SarahJMaasTheAssassinsBlade.mp3";
+        currentTime: number;
+    formatedMaxTime:string;
+    url = "http://hunyady.homeip.net/~hunyadym/SarahJMaasTheAssassinsBlade.mp3";
     //  url = "http://mp3.click4skill.hu/mp3/english/m8532en_US.mp3";
-    url = "https://drive.google.com/open?id=0B87RQKVjvrFVSjlGN2lROHgwdXc";
+    //url = "https://drive.google.com/open?id=0B87RQKVjvrFVSjlGN2lROHgwdXc";
 
     @property({ computed: 'computeProgress(currentTime,maxTime)' })
     progress: number;
@@ -27,9 +30,19 @@ class MediaPlayer extends polymer.Base {
         progress = (currentTime / maxTime) * 100;
         return progress;
     }
+     @property({ computed: 'formatTime(currentTime)' })
+     formatedCurrentTime:string;
+
+    formatTime(currentTime) {         
+        this.formatedCurrentTime = this.numToTime(currentTime);
+        this.formatedMaxTime = this.numToTime(parseInt(this.maxTime));
+        return this.numToTime(currentTime);
+    }
 
     constructor() {
         super();
+
+        this.$.file.addEventListener('change', this.handleFileUpload.bind(this));
 
         this.playState = PlayState.PAUSED;
         this.touchState = TouchState.UP;
@@ -39,51 +52,68 @@ class MediaPlayer extends polymer.Base {
             format: 'mp3',
             buffer: true,
         });
-        
-        // this.createCORSRequest('GET',this.url);
-        this.maxTime = 0;
-        var self = this;
-        // this.audio.
-        this.audio.on('load', function() {
+       
+       this.maxTime = 0;
+       this.audio.on('load', () => {
             console.log('audio is loaded');
-            self.maxTime = self.audio.duration();
-            console.log(self.maxTime, self.currentTime, self.progress);
+            this.maxTime = this.audio.duration();
+            this.currentTime = this.loadCurrentTimeFromLocalStorage();
+            this.audio.seek(this.loadCurrentTimeFromLocalStorage());
+            console.log(this.currentTime);  
         });
-        setInterval(function() {
-            if (self.touchState === TouchState.UP) {
-                if (isNaN(self.audio.seek())) {
-                    self.currentTime = 0;
-                } else {
-                    self.currentTime = self.audio.seek();
-                    // self.currentTime = 1;
-                }
-
-            }
-        }, 10);
+      
+        setInterval(() => {
+            this.saveCurrentTimeToLocalStorage();
+        }, 10000);
     }
-    loadAudio() {
-        var self = this;
-        var freader = new FileReader();
-        freader.readAsDataURL(audiofiles[0]);
-
-        freader.onload = function(e) {
-            self.audio.urls.push(e.target.result);
+    saveCurrentTimeToLocalStorage(){
+        let storage = localStorage;
+        storage.setItem('TheAssassinsBlade', this.currentTime+"");
+    } 
+    loadCurrentTimeFromLocalStorage(){
+        let storage = localStorage;
+       return storage.getItem('TheAssassinsBlade', 0);
+    }
+    handleBtn() {
+        this.$.file.click();
+    }
+    //TODO ez a fügvény valójában nem működik...
+    handleFileUpload() {
+        var input = this.$.file;
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onloadend = ()=> {
+              
+            };
+            reader.readAsDataURL(input.files[0]);
         }
     }
     onPlayTapped(event) {
         if (this.playState === PlayState.PAUSED) {
-            this.loadAudio();
+            this.audio.seek(this.currentTime);
             this.audio.play();
             this.playState = PlayState.PLAYING;
+           this.interval =  setInterval(() => {
+                if (this.touchState === TouchState.UP) {
+                    if (isNaN(this.audio.seek())) {
+                        this.currentTime = 0;
+                    } else {
+                        this.currentTime = this.audio.seek();
+                        //console.log(this.audio.seek());
+                    }
+                }
+            }, 10);
+            this.interval.start();
         } else if (this.playState === PlayState.PLAYING) {
             this.playState = PlayState.PAUSED;
             this.audio.pause();
+            this.interval.stop();
         }
-
     }
     onSliderChanged(event, detail) {
-        console.log('sliderchanged', this.progress, this.$.slider.value);
         this.audio.seek(this.$.slider.value / 100 * this.maxTime);
+        this.currentTime = this.audio.seek();
+        this.saveCurrentTimeToLocalStorage();
         this.touchState = TouchState.UP;
     }
     onTouchStarted() {
@@ -91,44 +121,35 @@ class MediaPlayer extends polymer.Base {
     }
     onTouchEnded() {
         this.touchState = TouchState.UP;
+        this.saveCurrentTimeToLocalStorage();
     }
     forwardOneMinTapped(event) {
         this.audio.seek(this.currentTime + 60);
+        this.saveCurrentTimeToLocalStorage();
     }
     forwardTenSecTapped(event) {
         this.audio.seek(this.currentTime + 10);
+        this.saveCurrentTimeToLocalStorage();
     }
     backwardOneMinTapped(event) {
         this.audio.seek(this.currentTime - 60);
+        this.saveCurrentTimeToLocalStorage();
     }
     backwardTenSecTapped(event) {
         this.audio.seek(this.currentTime - 10);
+        this.saveCurrentTimeToLocalStorage();
     }
+    numToTime(num:number){
+        var sec_num = parseInt(num, 10); // don't forget the second param
+        var hours   = Math.floor(sec_num / 3600);
+        var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
+        var seconds = sec_num - (hours * 3600) - (minutes * 60);
 
-    /*
-        createCORSRequest(method, url) {
-            var xhr = new XMLHttpRequest();
-            if ('withCredentials' in xhr) {
-                xhr.open(method, url, true);
-            } else if (typeof XDomainRequest != 'undefined') {
-                xhr = new XDomainRequest();
-                xhr.open(method, url);
-            } else {
-                xhr = null;
-            }
-            return xhr;
-        }
-    
-        getID3Tag() {
-            var window = new Window;        
-            /*window.jsmediatags.read(this.url,{onSuccess:function(tag){
-                      console.log(tag);
-                  },onError:function(error){
-                      console.log(error);
-                      }
-                  });*/
-    //  }
-
+        if (hours   < 10) {hours   = "0"+hours;}    
+        if (minutes < 10) {minutes = "0"+minutes;}
+        if (seconds < 10) {seconds = "0"+seconds;}
+        var time    = hours+':'+minutes+':'+seconds;
+        return time;
+    } 
 }
-
 MediaPlayer.register();

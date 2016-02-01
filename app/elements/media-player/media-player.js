@@ -21,10 +21,10 @@ require('./states/TouchState');
 var MediaPlayer = (function (_super) {
     __extends(MediaPlayer, _super);
     function MediaPlayer() {
+        var _this = this;
         _super.call(this);
-        //url = "http://hunyady.homeip.net/~hunyadym/SarahJMaasTheAssassinsBlade.mp3";
-        //  url = "http://mp3.click4skill.hu/mp3/english/m8532en_US.mp3";
-        this.url = "https://drive.google.com/open?id=0B87RQKVjvrFVSjlGN2lROHgwdXc";
+        this.url = "http://hunyady.homeip.net/~hunyadym/SarahJMaasTheAssassinsBlade.mp3";
+        this.$.file.addEventListener('change', this.handleFileUpload.bind(this));
         this.playState = PlayState.PAUSED;
         this.touchState = TouchState.UP;
         this.audio = new howler_min_js_1.Howl({
@@ -32,53 +32,77 @@ var MediaPlayer = (function (_super) {
             format: 'mp3',
             buffer: true,
         });
-        // this.createCORSRequest('GET',this.url);
         this.maxTime = 0;
-        var self = this;
-        // this.audio.
         this.audio.on('load', function () {
             console.log('audio is loaded');
-            self.maxTime = self.audio.duration();
-            console.log(self.maxTime, self.currentTime, self.progress);
+            _this.maxTime = _this.audio.duration();
+            _this.currentTime = _this.loadCurrentTimeFromLocalStorage();
+            _this.audio.seek(_this.loadCurrentTimeFromLocalStorage());
+            console.log(_this.currentTime);
         });
         setInterval(function () {
-            if (self.touchState === TouchState.UP) {
-                if (isNaN(self.audio.seek())) {
-                    self.currentTime = 0;
-                }
-                else {
-                    self.currentTime = self.audio.seek();
-                }
-            }
-        }, 10);
+            _this.saveCurrentTimeToLocalStorage();
+        }, 10000);
     }
     MediaPlayer.prototype.computeProgress = function (currentTime, maxTime) {
         var progress;
         progress = (currentTime / maxTime) * 100;
         return progress;
     };
-    MediaPlayer.prototype.loadAudio = function () {
-        var self = this;
-        var freader = new FileReader();
-        freader.readAsDataURL(audiofiles[0]);
-        freader.onload = function (e) {
-            self.audio.urls.push(e.target.result);
-        };
+    MediaPlayer.prototype.formatTime = function (currentTime) {
+        this.formatedCurrentTime = this.numToTime(currentTime);
+        this.formatedMaxTime = this.numToTime(parseInt(this.maxTime));
+        return this.numToTime(currentTime);
+    };
+    MediaPlayer.prototype.saveCurrentTimeToLocalStorage = function () {
+        var storage = localStorage;
+        storage.setItem('TheAssassinsBlade', this.currentTime + "");
+    };
+    MediaPlayer.prototype.loadCurrentTimeFromLocalStorage = function () {
+        var storage = localStorage;
+        return storage.getItem('TheAssassinsBlade', 0);
+    };
+    MediaPlayer.prototype.handleBtn = function () {
+        this.$.file.click();
+    };
+    //TODO ez a fügvény valójában nem működik...
+    MediaPlayer.prototype.handleFileUpload = function () {
+        var input = this.$.file;
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onloadend = function () {
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
     };
     MediaPlayer.prototype.onPlayTapped = function (event) {
+        var _this = this;
         if (this.playState === PlayState.PAUSED) {
-            this.loadAudio();
+            this.audio.seek(this.currentTime);
             this.audio.play();
             this.playState = PlayState.PLAYING;
+            this.interval = setInterval(function () {
+                if (_this.touchState === TouchState.UP) {
+                    if (isNaN(_this.audio.seek())) {
+                        _this.currentTime = 0;
+                    }
+                    else {
+                        _this.currentTime = _this.audio.seek();
+                    }
+                }
+            }, 10);
+            this.interval.start();
         }
         else if (this.playState === PlayState.PLAYING) {
             this.playState = PlayState.PAUSED;
             this.audio.pause();
+            this.interval.stop();
         }
     };
     MediaPlayer.prototype.onSliderChanged = function (event, detail) {
-        console.log('sliderchanged', this.progress, this.$.slider.value);
         this.audio.seek(this.$.slider.value / 100 * this.maxTime);
+        this.currentTime = this.audio.seek();
+        this.saveCurrentTimeToLocalStorage();
         this.touchState = TouchState.UP;
     };
     MediaPlayer.prototype.onTouchStarted = function () {
@@ -86,22 +110,47 @@ var MediaPlayer = (function (_super) {
     };
     MediaPlayer.prototype.onTouchEnded = function () {
         this.touchState = TouchState.UP;
+        this.saveCurrentTimeToLocalStorage();
     };
     MediaPlayer.prototype.forwardOneMinTapped = function (event) {
         this.audio.seek(this.currentTime + 60);
+        this.saveCurrentTimeToLocalStorage();
     };
     MediaPlayer.prototype.forwardTenSecTapped = function (event) {
         this.audio.seek(this.currentTime + 10);
+        this.saveCurrentTimeToLocalStorage();
     };
     MediaPlayer.prototype.backwardOneMinTapped = function (event) {
         this.audio.seek(this.currentTime - 60);
+        this.saveCurrentTimeToLocalStorage();
     };
     MediaPlayer.prototype.backwardTenSecTapped = function (event) {
         this.audio.seek(this.currentTime - 10);
+        this.saveCurrentTimeToLocalStorage();
+    };
+    MediaPlayer.prototype.numToTime = function (num) {
+        var sec_num = parseInt(num, 10); // don't forget the second param
+        var hours = Math.floor(sec_num / 3600);
+        var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
+        var seconds = sec_num - (hours * 3600) - (minutes * 60);
+        if (hours < 10) {
+            hours = "0" + hours;
+        }
+        if (minutes < 10) {
+            minutes = "0" + minutes;
+        }
+        if (seconds < 10) {
+            seconds = "0" + seconds;
+        }
+        var time = hours + ':' + minutes + ':' + seconds;
+        return time;
     };
     __decorate([
         property({ computed: 'computeProgress(currentTime,maxTime)' })
     ], MediaPlayer.prototype, "progress", void 0);
+    __decorate([
+        property({ computed: 'formatTime(currentTime)' })
+    ], MediaPlayer.prototype, "formatedCurrentTime", void 0);
     MediaPlayer = __decorate([
         component('media-player')
     ], MediaPlayer);
